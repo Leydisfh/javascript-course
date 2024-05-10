@@ -110,3 +110,57 @@ La URL base : ejemplo -> https://example.com/api
 * crear un usuario POST /users
 * uctualizar un usuario especifico PUT /users/{id}
 * eliminar un usuario especifico DELETE /users/{id}
+## Solicitar cuerpo 
+Solicitudes realizadas con el método PUT , POST o DELETE pueden tener un campo adicional llamado body. El cuerpo puede contener cualquier información que desee enviar con la solicitud. Sin embargo, las solicitudes realizadas con GET no pueden tener un archivo body.
+> Esto se debe a que con get obtenemos informacion, y con los demas metodos estamos enviando informacion
+
+### Post, Put, Delete
+Para realizar una solicitud de recuperación con un método que no sea GET, deberá especificarlo en el segundo argumento debajo de la method propiedad.
+<pre>
+ <code>
+  fetch(url, {
+   method: "POST" // or "post"
+  })
+  .then(response => response.json())
+  .then(data=> console.log(data))
+ </code>
+</pre>
+
+### Enviando el cuerpo
+En una aplicacion donde queremos crear un nuevo mensaje, el cuerpo del mensaje se veria asi
+<pre>
+ <code>
+  fetch("https://example.com/api/message", {
+    method: "POST",   // Decimos el metodo ya que vamos a enviar informacion
+    body: JSON.stringify({ // También necesitábamos enviar el body. En este ejemplo, el texto del mensaje. 
+        message: "Your message here..."
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log(data); // read the server response
+});
+ </code>
+</pre>
+> JSON.stringify el cuerpo
+No podemos enviar objetos directamente a la API, por lo que tenemos que convertirlos en una cadena con JSON.stringify.
+
+Otra informacion relevante que debemos enviar es el header donde le diremos el formato de datos que estaremos enviando
+<pre>
+ <code>
+  fetch(URL, {
+    method: "POST", // or PUT or DELETE
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        key1: 'value1', // replace with key/value based on documentation
+        key2: 'value2', // same as above (if needed)
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log(data); // read server response
+});
+ </code>
+</pre>
