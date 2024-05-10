@@ -66,3 +66,47 @@ fetch(URL)
  </code>
 </pre>
 > El error .catch(callback) se ejecuta cuando la promesa fetch() es rechazada.
+La promesa fetch() se rechaza por errores de red. Entonces, si la solicitud de recuperación no se pudo completar debido a un error de red, se rechazará y catch() se ejecutará la devolución de llamada.
+
+Sin embargo, si la solicitud fetch() se completó y el servidor respondió con un código de error (como 4xxo 5xx), entonces la fetch() promesa no se rechazará.
+
+El razonamiento aquí es que fetch() se completó con éxito, pero el servidor devolvió un error.
+
+Esto significa que si realiza una solicitud de recuperación de una URL que no existe (un 404), la fetch() promesa se cumplirá y se .then(callback) ejecutará como de costumbre. Solo .catch(callback) se ejecutará si algo impidió que fetch() completara la solicitud (por ejemplo, una falla de red).
+
+### Podremos manejar 4xxy 5xx verificando si response.ok no fue  true:
+<pre>
+ <code>
+  fetch(URL)
+    .then(response => {
+        if (!response.ok) {
+            // 4xx or 5xx error
+            throw new Error("API issues.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+ </code>
+</pre>
+> Lo que estamos haciendo aquí es verificar cuándo response.ok es false, en ese caso, arrojamos un nuevo error.
+Rechazará la promesa, por lo throw new Error("API issues.") que el código deja de ejecutar el actual y.then(callback) luego salta al .catch(callback).
+
+## Metodos Fetch
+Cuando hacemos una peticion con fetch(URL) por defecto se usa el metodo Get, hay 4 metodos comunes:
+* Get --> lee data
+* Post --> envia data
+* Put --> modifica data
+* Delete --> elimina data
+
+Cuando vamos a usar estos metodos debemos tener en cuenta :
+
+La URL base : ejemplo -> https://example.com/api
+* lista de usuarios GET /users
+* crear un usuario POST /users
+* uctualizar un usuario especifico PUT /users/{id}
+* eliminar un usuario especifico DELETE /users/{id}
