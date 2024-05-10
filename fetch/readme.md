@@ -28,12 +28,41 @@ Además, este callback recibirá como primer argumento la respuesta a la solicit
 </pre> 
 *** 
 ## Obteniendo JSON
-Siempre que recibimos solo un objeto de respuesta usando Fetch(URL), el navegador no sabe que los datos que ha recibido están en formato JSON . Es por eso que deberíamos convertir manualmente la respuesta a JSON:
+Debemos comprender que cada vez que enviamos una solicitud de recuperación a una determinada API y espera JSON (que es la mayor parte del tiempo), debemos convertir la respuesta que recibimos a formato JSON
 <pre>
  <code>
   fetch(URL)
-  .then(response =>{
-       return response.json()
-  })
+  .then(response => response.json())
  </code>
 </pre>
+> Este método .json() responsees es casi exactamente el mismo JSON.parse(string). Sin embargo, la única diferencia es que response.json() no bloquea y es asincrónico, lo que significa que devuelve una promesa .
+***
+Al igual que cómo fetch(URL) devuelve una promesa, el response.json() método también devuelve una promesa. Esto significa que no podemos leer su resultado directamente. En cambio, tenemos queresolverla promesa con .then(callback).
+
+Al hacerlo, nos dará acceso a lo data que obtenemos al buscar esa URL. Así es como se ve la sintaxis:
+<pre>
+ <code>
+fetch(URL)
+.then(response => response.json())
+.then(data => {
+    console.log(data);
+});
+ </code>
+</pre>
+> La variable data será la información que devuelva la API
+***
+## Manejando errores en fetch
+<pre>
+ <code>
+  fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        // handle network errors
+        console.error(error);
+    });
+ </code>
+</pre>
+> El error .catch(callback) se ejecuta cuando la promesa fetch() es rechazada.
