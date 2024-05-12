@@ -164,3 +164,100 @@ Otra informacion relevante que debemos enviar es el header donde le diremos el f
 });
  </code>
 </pre>
+***
+Un contenedor para fetch no es absolutamente necesario, pero hace que trabajar con la búsqueda sea más fácil y elocuente.
+Un contenedor de recuperación es una clase que envuelve la API de Fetch de  una manera que funciona específicamente, ya que 
+como desarrolladores en varias ocaciones tendremos que llamar a la misma Api pero con diferentes puntos finales.
+Esto significa que por cada  solicitud fetch que hagamos, tendremos bastante repetición
+
+Ejemplo URL base : https://jsdemo-3f387-default-rtdb.europe-west1.firebasedatabase.app
+
+Puntos finales :
+
+* CONSEGUIR /notifications/new.json
+* CONSEGUIR /chapters/all.json
+Si tenemos que enviar dos solicitudes de recuperación a ambos puntos finales, tendremos bastantes repeticiones:
+<pre>
+ <code>
+  fetch(`https://jsdemo-3f387-default-rtdb.europe-west1.firebasedatabase.app/notifications/new.json`)
+.then(response => response.json())
+.then(data => {
+    console.log(data);
+});
+
+fetch(`https://jsdemo-3f387-default-rtdb.europe-west1.firebasedatabase.app/chapters/all.json`)
+.then(response => response.json())
+.then(data => {
+    console.log(data);
+});
+ </code>
+</pre>
+
+Mientras mas peticiones hagamos mas largo que hace el codigo
+
+Esta es exactamente la razón por la que una clase contenedora de recuperación puede resultar útil. Suponiendo que ya hemos creado este contenedor de recuperación, podemos reescribir el código anterior de modo que tenga el siguiente aspecto:
+<pre>
+ <code>
+  const API = new FetchWrapper("https://jsdemo-3f387-default-rtdb.europe-west1.firebasedatabase.app");
+
+API.get("/notifications/new.json").then(data => {
+    console.log(data);
+});
+
+API.get("/chapters/all.json").then(data => {
+    console.log(data);
+});
+ </code>
+</pre>
+
+Esta es exactamente la razón por la que una clase contenedora de recuperación puede resultar útil. Suponiendo que ya hemos creado este contenedor de recuperación, podemos reescribir el código anterior de modo que tenga el siguiente aspecto:
+<pre>
+ <code>
+  const API = new FetchWrapper("https://jsdemo-3f387-default-rtdb.europe-west1.firebasedatabase.app");
+
+API.get("/notifications/new.json").then(data => {
+    console.log(data);
+});
+
+API.get("/chapters/all.json").then(data => {
+    console.log(data);
+});
+ </code>
+</pre>
+### ¿Qué pasa con PUT/POST/DELETE?
+
+Asi quedaria nuestro codigo :
+<pre>
+ <code>
+  const API = new FetchWrapper("https://api.learnjavascript.online");
+
+API.put("/demo/grades.json", {
+    grade: 18
+}).then(data => {
+    console.log(data);
+});
+ </code>
+</pre>
+
+Este seria el codigo para la clase constructora
+<pre>
+ <code>
+  class FetchWrapper {
+    constructor(baseURL) {
+        this.baseURL = baseURL;
+    }
+
+    get(endpoint) {
+        return fetch(this.baseURL + endpoint)
+            .then(response => response.json());
+    }
+}
+ </code>
+</pre>
+
+:memo: **Importante:** 
+* El return es muy importante. Es lo que nos permite .then(data => ...) invocar API.get(...). Eso es porque devuelve el resultado de fetch().then().
+* No olvides anteponer el endpointcon this.baseURL.
+* Como sabemos que la API siempre devolverá JSON, convertimos la respuesta a JSON dentro del get()método para no tener que hacerlo fuera de la clase FetchWrapper.
+
+  
