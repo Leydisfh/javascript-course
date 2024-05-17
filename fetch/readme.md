@@ -260,4 +260,61 @@ Este seria el codigo para la clase constructora
 * No olvides anteponer el endpointcon this.baseURL.
 * Como sabemos que la API siempre devolverá JSON, convertimos la respuesta a JSON dentro del get()método para no tener que hacerlo fuera de la clase FetchWrapper.
 
-  
+<em> Los metodos POST() y DELETE() son muy similares al metodo PUT(), lo unico que cambiamos es el metodo que vamos a utilizar </em>
+Por lo que podemos reescribir el metodo PUT como una funcion privada
+<pre>
+ <code>
+class FetchWrapper {
+    // constructor() and get()
+
+    #send(method, endpoint, body) {
+        return fetch(this.baseURL + endpoint, {
+            method: method, // this is now dynamic
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }).then(response => response.json());
+    }
+}
+
+ </code>
+</pre>
+
+El método #send toma los  method( "put", "post", o "delete") seguido de endpointy body.
+Entonces, ahora podemos implementar los métodos put(), post()y delete() que llaman a este método privado interno #send():
+<pre>
+<code>
+class FetchWrapper {
+    // constructor() and get()
+
+    put(endpoint, body) {
+        // pass the endpoint and body parameters to #send
+        // and specify the method to be 'put'
+        return this.#send("put", endpoint, body);
+    }
+
+    post(endpoint, body) {
+        // pass the endpoint and body parameters to #send
+        // and specify the method to be 'post'
+        return this.#send("post", endpoint, body);
+    }
+
+    delete(endpoint, body) {
+        // pass the endpoint and body parameters to #send
+        // and specify the method to be 'delete'
+        return this.#send("delete", endpoint, body);
+    }
+
+    #send(method, endpoint, body) {
+        return fetch(this.baseURL + endpoint, {
+            method, // object shorthand
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }).then(response => response.json());
+    }
+}
+</code> 
+</pre>
